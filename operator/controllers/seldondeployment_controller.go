@@ -19,13 +19,15 @@ package controllers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/banzaicloud/k8s-objectmatcher/patch"
-	"github.com/google/go-cmp/cmp"
-	"google.golang.org/protobuf/testing/protocmp"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/banzaicloud/k8s-objectmatcher/patch"
+	"github.com/google/go-cmp/cmp"
+	"google.golang.org/protobuf/testing/protocmp"
 
 	v2 "github.com/emissary-ingress/emissary/v3/pkg/api/getambassador.io/v2"
 	"github.com/seldonio/seldon-core/operator/controllers/ambassador"
@@ -50,8 +52,6 @@ import (
 	"github.com/go-logr/logr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	"encoding/json"
 
 	kedav1alpha1 "github.com/kedacore/keda/v2/apis/keda/v1alpha1"
 	machinelearningv1 "github.com/seldonio/seldon-core/operator/apis/machinelearning.seldon.io/v1"
@@ -1730,14 +1730,14 @@ func (r *SeldonDeploymentReconciler) createDeployments(components *components, i
 			}
 			if !patchResult.IsEmpty() {
 				log.Info("Updating Deployment", "namespace", deploy.Namespace, "name", deploy.Name)
-				log.V(5).Info("Deployment differs", "patch result", patchResult.String())
+				log.V(1).Info("Deployment differs", "patch result", patchResult.String())
 				b, err := json.Marshal(deploy.Spec.Template.Spec)
 				if err == nil {
-					log.V(5).Info("Deployment differs", "existing", string(b))
+					log.V(1).Info("Deployment differs", "existing", string(b))
 				}
 				b2, err := json.Marshal(found.Spec.Template.Spec)
 				if err == nil {
-					log.V(5).Info("Deployment differs", "found", string(b2))
+					log.V(1).Info("Deployment differs", "found", string(b2))
 				}
 
 				desiredDeployment := found.DeepCopy()
